@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LicenseForge — Key Paneli</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Familjen+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #05070a;
+  --s1:       #0a0e14;
+  --s2:       #0f1520;
+  --border:   #1a2535;
+  --border2:  #243040;
+  --acc:      #3b82f6;
+  --acc-glow: rgba(59,130,246,0.25);
+  --acc-dim:  rgba(59,130,246,0.1);
+  --green:    #22c55e;
+  --green-dim:rgba(34,197,94,0.1);
+  --red:      #ef4444;
+  --red-dim:  rgba(239,68,68,0.1);
+  --yellow:   #f59e0b;
+  --text:     #94a3b8;
+  --text2:    #cbd5e1;
+  --white:    #f1f5f9;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Familjen Grotesk', sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated grid */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-orb {
+  position: fixed;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 65%);
+  top: -200px;
+  right: -100px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SETUP OVERLAY ── */
+#setup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,7,10,0.97);
+  backdrop-filter: blur(12px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.setup-box {
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 48px;
+  max-width: 560px;
+  width: 90%;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+}
+
+.setup-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--acc-dim);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+.setup-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+}
+
+.setup-desc {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.setup-desc a {
+  color: var(--acc);
+  text-decoration: none;
+}
+.setup-desc a:hover { text-decoration: underline; }
+
+.setup-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.setup-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--acc);
+  background: var(--acc-dim);
+  border: 1px solid rgba(59,130,246,0.25);
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-text {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.step-text strong { color: var(--white); }
+.step-text code {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--acc);
+  font-size: 0.68rem;
+}
+
+.field-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 16px;
+}
+
+.field-input:focus {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 3px var(--acc-dim);
+}
+
+.field-input::placeholder { color: var(--border2); }
+
+.btn-setup {
+  width: 100%;
+  background: var(--acc);
+  color: #fff;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 24px var(--acc-glow);
+  letter-spacing: 0.01em;
+}
+
+.btn-setup:hover { transform: translateY(-1px); box-shadow: 0 0 36px var(--acc-glow); }
+.btn-setup:active { transform: translateY(0); }
+
+.setup-error {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--red);
+  background: var(--red-dim);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  display: none;
+}
+
+/* ── MAIN APP ── */
+#app { display: none; position: relative; z-index: 10; }
+
+header {
+  padding: 24px 48px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: rgba(5,7,10,0.85);
+  backdrop-filter: blur(16px);
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+.logo-mark {
+  width: 30px;
+  height: 30px;
+  background: var(--acc);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 0 16px var(--acc-glow);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bin-badge {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text);
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bin-badge span {
+  color: var(--green);
+  font-weight: 700;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.4;transform:scale(0.7)}
+}
+
+.btn-reconnect {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reconnect:hover { color: var(--white); border-color: var(--border2); }
+
+main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 52px 24px;
+}
+
+.page-header {
+  margin-bottom: 48px;
+}
+
+.page-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.page-title em {
+  font-style: normal;
+  color: var(--acc);
+}
+
+.page-sub {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text);
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.stat {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  transition: border-color 0.2s;
+}
+
+.stat:hover { border-color: var(--border2); }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.stat-val {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.stat-val.blue { color: var(--acc); }
+.stat-val.green { color: var(--green); }
+.stat-val.red { color: var(--red); }
+
+/* Card */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title::before {
+  content: '';
+  width: 3px;
+  height: 16px;
+  background: var(--acc);
+  border-radius: 2px;
+}
+
+/* Gen controls */
+.gen-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.ctrl {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ctrl label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ctrl select, .ctrl input {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  padding: 9px 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ctrl select:focus, .ctrl input:focus {
+  border-color: var(--acc);
+}
+
+.btn {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.btn-blue {
+  background: var(--acc);
+  color: #fff;
+  box-shadow: 0 0 16px var(--acc-glow);
+}
+.btn-blue:hover { transform: translateY(-1px); box-shadow: 0 0 28px var(--acc-glow); }
+.btn-blue:active { transform: translateY(0); }
+.btn-blue:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { color: var(--white); border-color: var(--border2); }
+
+/* Keys list */
+.keys-wrap { display: flex; flex-direction: column; gap: 8px; }
+
+.key-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 15px;
+  transition: all 0.2s;
+  animation: fadeUp 0.25s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.key-row:hover { border-color: var(--border2); }
+.key-row.used { opacity: 0.38; border-style: dashed; }
+
+.kdot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.kdot.on  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.kdot.off { background: var(--text); }
+
+.kval {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--white);
+  flex: 1;
+  letter-spacing: 0.04em;
+  word-break: break-all;
+}
+.key-row.used .kval { text-decoration: line-through; color: var(--text); }
+
+.kmeta {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.kbadge {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+.kbadge.on  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.kbadge.off { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
+
+.kbtn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.kbtn:hover { color: var(--white); border-color: var(--border2); }
+.kbtn.copy-ok { color: var(--green); border-color: rgba(34,197,94,0.4); background: var(--green-dim); }
+.kbtn.del-btn:hover { color: var(--red); border-color: rgba(239,68,68,0.3); }
+
+.empty {
+  text-align: center;
+  padding: 48px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text);
+}
+.empty-icon { font-size: 2rem; margin-bottom: 12px; opacity: 0.3; }
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--white);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+  z-index: 9999;
+  max-width: 300px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.ok { border-color: rgba(34,197,94,0.4); color: var(--green); }
+.toast.err { border-color: rgba(239,68,68,0.4); color: var(--red); }
+
+/* Sync indicator */
+.sync-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text);
+  margin-top: 14px;
+}
+.sync-icon { font-size: 0.7rem; }
+.sync-icon.syncing { animation: rotate 1s linear infinite; display: inline-block; }
+@keyframes rotate { to { transform: rotate(360deg); } }
+
+@media(max-width:640px){
+  header { padding: 16px 20px; }
+  main { padding: 36px 16px; }
+  .page-title { font-size: 2rem; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .gen-row { flex-direction: column; }
+  .gen-row .btn { width: 100%; justify-content: center; }
+  .card { padding: 20px; }
+  .kmeta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow-orb"></div>
+
+<!-- ═══ SETUP OVERLAY ═══ -->
+<div id="setup-overlay">
+  <div class="setup-box">
+    <div class="setup-icon">🔗</div>
+    <div class="setup-title">JSONBin Bağlantısı</div>
+    <div class="setup-desc">
+      Key'ler <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> üzerinde saklanır.<br>
+      Kurulum tek seferlik — bilgiler tarayıcına kaydedilir.
+    </div>
+
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong><a href="https://jsonbin.io" target="_blank" style="color:var(--acc);text-decoration:none">jsonbin.io</a></strong>'a üye ol (ücretsiz) →
+          sağ üstten <strong>API Keys</strong> menüsüne gir → <strong>Secret Key</strong>'i kopyala
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          Dashboard'dan <strong>New Bin</strong> oluştur → içine <code>{"keys":[]}</code> yaz → kaydet →
+          URL'deki <strong>BIN ID</strong>'yi kopyala
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          Aşağıya yapıştır → Bağlan. Hepsi bu!
+        </div>
+      </div>
+    </div>
+
+    <div class="field-label">Secret Key (X-Master-Key)</div>
+    <input class="field-input" id="inp-secret" type="password" placeholder="$2a$10$...">
+
+    <div class="field-label">Bin ID</div>
+    <input class="field-input" id="inp-bin" type="text" placeholder="6821a3f...">
+
+    <button class="btn-setup" id="btn-connect" onclick="connect()">
+      Bağlan & Başla
+    </button>
+    <div class="setup-error" id="setup-err"></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">⬡</div>
+      LicenseForge
+    </div>
+    <div class="header-right">
+      <div class="bin-badge">
+        <div class="live-dot"></div>
+        JSONBin · BIN: <span id="hdr-bin">—</span>
+      </div>
+      <button class="btn-reconnect" onclick="reconnect()">⚙ Ayarlar</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div class="page-title">Lisans <em>Key</em><br>Yönetimi</div>
+      <div class="page-sub">// jsonbin.io · tek kullanımlık · gerçek zamanlı</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Toplam Key</div>
+        <div class="stat-val blue" id="s-total">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Aktif</div>
+        <div class="stat-val green" id="s-active">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Kullanıldı</div>
+        <div class="stat-val red" id="s-used">—</div>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Key Üret</div>
+      </div>
+      <div class="gen-row">
+        <div class="ctrl">
+          <label>Adet</label>
+          <select id="g-count">
+            <option value="1">1</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Format</label>
+          <select id="g-format">
+            <option value="4x4">XXXX-XXXX-XXXX-XXXX</option>
+            <option value="8x4">XXXXXXXX-XXXX-XXXX</option>
+            <option value="flat">21 Karakter Düz</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Prefix</label>
+          <input id="g-prefix" type="text" placeholder="LIC" maxlength="6" style="width:80px">
+        </div>
+        <button class="btn btn-blue" id="btn-gen" onclick="generateKeys()" style="align-self:flex-end">
+          ⚡ Üret
+        </button>
+        <button class="btn btn-ghost" onclick="refreshKeys()" style="align-self:flex-end">
+          ↻ Yenile
+        </button>
+      </div>
+      <div class="sync-row" id="sync-status">
+        <span class="sync-icon">●</span>
+        <span id="sync-text">Hazır</span>
+      </div>
+    </div>
+
+    <!-- Key List -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Key Listesi</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:8px 14px" onclick="copyActive()">Aktifleri Kopyala</button>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:8px 14px;color:var(--red);border-color:rgba(239,68,68,0.3)" onclick="clearUsed()">Kullanılanları Sil</button>
+        </div>
+      </div>
+      <div id="keys-list">
+        <div class="empty"><div class="empty-icon">⏳</div>Yükleniyor...</div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">Python Entegrasyon Bilgisi</div>
+      <div style="font-family:var(--mono);font-size:0.7rem;line-height:2;color:var(--text)">
+        <span style="color:var(--acc)">►</span> <strong style="color:var(--white)">app.py</strong> dosyasını aç — üstteki <code style="background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;color:var(--acc)">BIN_ID</code> ve <code style="background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;color:var(--acc)">API_KEY</code> değişkenlerini doldur<br>
+        <span style="color:var(--acc)">►</span> <strong style="color:var(--white)">python app.py</strong> çalıştır → key gir → JSONBin'de doğrulanır → kullanılınca <strong style="color:var(--red)">used: true</strong> yazılır<br>
+        <span style="color:var(--acc)">►</span> Aynı key ikinci kez girilince <strong style="color:var(--red)">reddedilir</strong> — hiçbir local dosya gerekmez
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+let CFG = { secret: '', binId: '' };
+let keyData = { keys: [] };
+
+// ─── Setup / Connect ──────────────────────────────────────────────────────────
+function loadConfig() {
+  const s = localStorage.getItem('lf_cfg');
+  if (s) { CFG = JSON.parse(s); return true; }
+  return false;
+}
+
+function saveConfig() {
+  localStorage.setItem('lf_cfg', JSON.stringify(CFG));
+}
+
+async function connect() {
+  const secret = document.getElementById('inp-secret').value.trim();
+  const binId  = document.getElementById('inp-bin').value.trim();
+  const errEl  = document.getElementById('setup-err');
+  const btn    = document.getElementById('btn-connect');
+
+  if (!secret || !binId) {
+    showSetupErr('Secret Key ve Bin ID boş bırakılamaz.');
+    return;
+  }
+
+  btn.innerHTML = '<span class="spinner"></span> Bağlanıyor...';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    const res = await fetch(`${JSONBIN_BASE}/${binId}/latest`, {
+      headers: { 'X-Master-Key': secret }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    keyData = data.record || { keys: [] };
+
+    CFG = { secret, binId };
+    saveConfig();
+    launchApp();
+  } catch(e) {
+    showSetupErr(`Bağlantı başarısız: ${e.message} — Secret Key ve Bin ID'yi kontrol et.`);
+    btn.innerHTML = 'Bağlan & Başla';
+    btn.disabled = false;
+  }
+}
+
+function showSetupErr(msg) {
+  const el = document.getElementById('setup-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function reconnect() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('setup-overlay').style.display = 'flex';
+  document.getElementById('inp-secret').value = CFG.secret;
+  document.getElementById('inp-bin').value = CFG.binId;
+}
+
+function launchApp() {
+  document.getElementById('setup-overlay').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('hdr-bin').textContent = CFG.binId.slice(-8);
+  renderAll();
+}
+
+// ─── JSONBin API ──────────────────────────────────────────────────────────────
+async function fetchKeys() {
+  const res = await fetch(`${JSONBIN_BASE}/${CFG.binId}/latest`, {
+    headers: { 'X-Master-Key': CFG.secret }
+  });
+  if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+  const data = await res.json();
+  return data.record || { keys: [] };
+}
+
+async function pushKeys(data) {
+  const res = await fetch(`${JSONBIN_BASE}/${CFG.binId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': CFG.secret
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(`Push failed: ${res.status}`);
+  return res.json();
+}
+
+// ─── Key generation ───────────────────────────────────────────────────────────
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function rnd(n) { let s=''; for(let i=0;i<n;i++) s+=CHARS[Math.floor(Math.random()*CHARS.length)]; return s; }
+
+function makeKey() {
+  const fmt = document.getElementById('g-format').value;
+  const pfx = document.getElementById('g-prefix').value.trim().toUpperCase();
+  let k;
+  if (fmt === '4x4') k = [rnd(4),rnd(4),rnd(4),rnd(4)].join('-');
+  else if (fmt === '8x4') k = [rnd(8),rnd(4),rnd(4)].join('-');
+  else k = rnd(21);
+  return pfx ? `${pfx}-${k}` : k;
+}
+
+async function generateKeys() {
+  const count = parseInt(document.getElementById('g-count').value);
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  setSyncStatus('syncing', 'JSONBin\'e yazılıyor...');
+
+  try {
+    const fresh = await fetchKeys();
+    const now = new Date().toISOString();
+    for (let i = 0; i < count; i++) {
+      fresh.keys.unshift({ key: makeKey(), used: false, created: now, usedAt: null });
+    }
+    await pushKeys(fresh);
+    keyData = fresh;
+    renderAll();
+    showToast(`✓ ${count} key üretildi`, 'ok');
+    setSyncStatus('ok', `Son sync: ${timeNow()}`);
+  } catch(e) {
+    showToast('✗ Hata: ' + e.message, 'err');
+    setSyncStatus('err', 'Sync başarısız');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '⚡ Üret';
+}
+
+async function refreshKeys() {
+  setSyncStatus('syncing', 'Yükleniyor...');
+  try {
+    keyData = await fetchKeys();
+    renderAll();
+    setSyncStatus('ok', `Son sync: ${timeNow()}`);
+  } catch(e) {
+    showToast('✗ Yükleme hatası: ' + e.message, 'err');
+    setSyncStatus('err', 'Bağlantı hatası');
+  }
+}
+
+async function markUsed(idx) {
+  setSyncStatus('syncing', 'Güncelleniyor...');
+  try {
+    const fresh = await fetchKeys();
+    fresh.keys[idx].used = true;
+    fresh.keys[idx].usedAt = new Date().toISOString();
+    await pushKeys(fresh);
+    keyData = fresh;
+    renderAll();
+    showToast('⚠ Key kullanıldı olarak işaretlendi', 'ok');
+    setSyncStatus('ok', `Son sync: ${timeNow()}`);
+  } catch(e) {
+    showToast('✗ Hata: ' + e.message, 'err');
+    setSyncStatus('err', 'Sync başarısız');
+  }
+}
+
+async function deleteKey(idx) {
+  setSyncStatus('syncing', 'Siliniyor...');
+  try {
+    const fresh = await fetchKeys();
+    fresh.keys.splice(idx, 1);
+    await pushKeys(fresh);
+    keyData = fresh;
+    renderAll();
+    showToast('Key silindi', 'ok');
+    setSyncStatus('ok', `Son sync: ${timeNow()}`);
+  } catch(e) {
+    showToast('✗ Hata: ' + e.message, 'err');
+    setSyncStatus('err', 'Sync başarısız');
+  }
+}
+
+async function clearUsed() {
+  if (!confirm('Kullanılmış tüm keyler silinsin mi?')) return;
+  setSyncStatus('syncing', 'Temizleniyor...');
+  try {
+    const fresh = await fetchKeys();
+    const before = fresh.keys.length;
+    fresh.keys = fresh.keys.filter(k => !k.used);
+    await pushKeys(fresh);
+    keyData = fresh;
+    renderAll();
+    showToast(`✓ ${before - fresh.keys.length} key silindi`, 'ok');
+    setSyncStatus('ok', `Son sync: ${timeNow()}`);
+  } catch(e) {
+    showToast('✗ Hata: ' + e.message, 'err');
+  }
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+function renderAll() {
+  const keys = keyData.keys || [];
+  const total  = keys.length;
+  const used   = keys.filter(k=>k.used).length;
+  const active = total - used;
+
+  document.getElementById('s-total').textContent  = total;
+  document.getElementById('s-active').textContent = active;
+  document.getElementById('s-used').textContent   = used;
+
+  const el = document.getElementById('keys-list');
+  if (!keys.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🔑</div>Henüz key yok. Üstten üretin.</div>`;
+    return;
+  }
+
+  el.innerHTML = '<div class="keys-wrap">' + keys.map((k,i) => `
+    <div class="key-row ${k.used?'used':''}">
+      <div class="kdot ${k.used?'off':'on'}"></div>
+      <div class="kval">${k.key}</div>
+      <div class="kmeta">${fmtDate(k.created)}</div>
+      <span class="kbadge ${k.used?'off':'on'}">${k.used?'KULLANILDI':'AKTİF'}</span>
+      ${!k.used ? `<button class="kbtn" onclick="copyKey('${k.key}',this)">Kopyala</button>` : ''}
+      ${!k.used ? `<button class="kbtn" onclick="markUsed(${i})" style="color:var(--yellow);border-color:rgba(245,158,11,0.3)">İptal Et</button>` : ''}
+      <button class="kbtn del-btn" onclick="deleteKey(${i})">✕</button>
+    </div>
+  `).join('') + '</div>';
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function copyKey(val, btn) {
+  navigator.clipboard.writeText(val);
+  btn.textContent = '✓ Kopyalandı';
+  btn.classList.add('copy-ok');
+  setTimeout(()=>{ btn.textContent='Kopyala'; btn.classList.remove('copy-ok'); }, 2000);
+  showToast('✓ Key kopyalandı', 'ok');
+}
+
+function copyActive() {
+  const active = (keyData.keys||[]).filter(k=>!k.used).map(k=>k.key).join('\n');
+  if (!active) { showToast('Aktif key yok', 'err'); return; }
+  navigator.clipboard.writeText(active);
+  showToast('✓ Aktif keyler kopyalandı', 'ok');
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+
+function timeNow() {
+  return new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+function setSyncStatus(type, text) {
+  const icon = document.querySelector('.sync-icon');
+  const txt  = document.getElementById('sync-text');
+  txt.textContent = text;
+  icon.className = 'sync-icon' + (type==='syncing'?' syncing':'');
+  icon.textContent = type==='syncing' ? '↻' : type==='err' ? '✗' : '●';
+  icon.style.color = type==='err' ? 'var(--red)' : type==='syncing' ? 'var(--yellow)' : 'var(--green)';
+}
+
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+if (loadConfig() && CFG.secret && CFG.binId) {
+  document.getElementById('inp-secret').value = CFG.secret;
+  document.getElementById('inp-bin').value = CFG.binId;
+  // Auto-connect
+  (async () => {
+    try {
+      keyData = await fetchKeys();
+      launchApp();
+      setSyncStatus('ok', `Son sync: ${timeNow()}`);
+    } catch(e) {
+      // fallback to setup
+    }
+  })();
+}
+</script>
+</body>
+</html>
